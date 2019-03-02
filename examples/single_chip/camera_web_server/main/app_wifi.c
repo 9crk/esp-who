@@ -48,7 +48,7 @@
 static const char *TAG = "camera wifi";
 
 static int s_retry_num = 0;
-
+extern int wifi_connected;
 static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch(event->event_id) {
@@ -69,6 +69,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
         ESP_LOGI(TAG, "got ip:%s",
                  ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
         s_retry_num = 0;
+	wifi_connected = 1;
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         {

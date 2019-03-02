@@ -69,7 +69,7 @@ void app_camera_main ()
     config.frame_size = FRAMESIZE_UXGA;
     config.jpeg_quality = 10;
     config.fb_count = 2;
-
+    ESP_LOGE("ZZZZZ","start init\n");
     // camera init
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK) {
@@ -80,4 +80,5 @@ void app_camera_main ()
     //drop down frame size for higher initial frame rate
     sensor_t * s = esp_camera_sensor_get();
     s->set_framesize(s, FRAMESIZE_QVGA);
+    ESP_LOGE("ZZZZZ","end init\n");
 }

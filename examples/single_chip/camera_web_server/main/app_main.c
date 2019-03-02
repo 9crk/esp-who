@@ -22,11 +22,20 @@
 
 #include "app_camera.h"
 #include "app_wifi.h"
-#include "app_httpd.h"
-
+//#include "app_httpd.h"
+#include "app_govee.h"
+#include "esp_timer.h"
+#include "esp_log.h"
 void app_main()
 {
-    app_wifi_main();
+    int64_t fr_start = esp_timer_get_time();
+    ESP_LOGE("ZZZZZ","mainmmmmmmmmmmmmmmmmmmmmme %u\n",(uint32_t)fr_start);
     app_camera_main();
-    app_httpd_main();
+    fr_start = esp_timer_get_time();
+    ESP_LOGE("ZZZZZ","camera ok %u\n",(uint32_t)fr_start);
+    app_wifi_main();
+    fr_start = esp_timer_get_time();
+    ESP_LOGE("ZZZZZ","wifi ok%u\n",(uint32_t)fr_start);
+//    app_httpd_main();
+    app_govee_main();
 }
