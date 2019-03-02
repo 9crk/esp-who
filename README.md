@@ -1,3 +1,14 @@
+# 9crk note:
+
+export PYTHONPATH=/Users/zhouhua/work/caffe/python:/usr//local/lib/python2.7/site-packages
+export PATH=$PATH:/home/zhouhua/ESP32/xtensa-esp32-elf/bin
+
+python /Volumes/zhouhua/ESP32/esp-idf-v3.1/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/tty.wchusbserial1420 --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size detect 0x1000 /Volumes/zhouhua/ESP32/esp-who/examples/single_chip/camera_web_server/build/bootloader/bootloader.bin 0x10000 /Volumes/zhouhua/ESP32/esp-who/examples/single_chip/camera_web_server/build/camera_web_server.bin 0x8000 /Volumes/zhouhua/ESP32/esp-who/examples/single_chip/camera_web_server/build/partitions.bin
+
+
+
+
+
 # ESP-WHO
 
 ESP-WHO is a face detection and recognition platform that is currently based on Espressif Systems' [ESP32](https://espressif.com/en/products/hardware/esp32/overview) chip.
