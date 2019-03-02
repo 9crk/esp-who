@@ -1,5 +1,5 @@
 # 9crk note:
-
+export IDF_PATH=/home/zhouhua/ESP32/esp-idf-v3.1
 export PYTHONPATH=/Users/zhouhua/work/caffe/python:/usr//local/lib/python2.7/site-packages
 export PATH=$PATH:/home/zhouhua/ESP32/xtensa-esp32-elf/bin
 
