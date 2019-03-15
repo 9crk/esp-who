@@ -84,7 +84,7 @@ void upload_one(camera_fb_t *fb){
     sprintf(lengthStr,"%d",fb->len);
     ESP_LOGE("LLLLLLLLLL"," = = %s",lengthStr);
     esp_http_client_config_t config = {
-        .url = "http://10.162.2.83:8999/upload",
+        .url = "http://10.162.2.151:8999/upload",
         .event_handler = _http_event_handler,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config); 
@@ -125,19 +125,74 @@ void upload_one(camera_fb_t *fb){
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
 }
+void upload_one_buf(uint8_t* buf,size_t len){
+    char lengthStr[20];
+    sprintf(lengthStr,"%d",len);
+    ESP_LOGE("LLLLLLLLLL"," = = %s",lengthStr);
+    esp_http_client_config_t config = {
+        .url = "http://10.162.2.151:8999/upload",
+        .event_handler = _http_event_handler,
+    };
+    esp_http_client_handle_t client = esp_http_client_init(&config); 
+    esp_http_client_set_header(client, "Connection", "keep-alive"); 
+    esp_http_client_set_header(client,"Content-Type", "image/jpeg"); 
+    esp_http_client_set_header(client, "Content-Type","multipart/form-data; boundary=----WebKitFormBoundary8p8BYTRctIVvppjP");
+    esp_http_client_set_header(client, "User-Agent", "9crk");
+    esp_http_client_set_header(client, "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+    esp_http_client_set_header(client, "Accept-Encoding", "gzip, deflate");
+    esp_http_client_set_header(client, "Content-Length", lengthStr);
+    esp_http_client_set_header(client,"Accept-Language","zh-CN,zh;q=0.9,en;q=0.8\r\n\r\n------WebKitFormBoundary8p8BYTRctIVvppjP");
+    esp_http_client_set_header(client,"Content-Disposition", "form-data; name=\"myfile\"; filename=\"picture.jpg\"");
+    esp_http_client_set_url(client, config.url);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    esp_err_t err;
+    if ((err = esp_http_client_open(client, len)) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to open HTTP connection: %s", esp_err_to_name(err));
+        esp_http_client_cleanup(client);
+    	return;
+    }
+    esp_http_client_write(client, (char*)buf, len);
+    esp_http_client_write(client,endhead,strlen(endhead));
+    
+    /*int content_length =  esp_http_client_fetch_headers(client);
+    int total_read_len = 0, read_len;
+    if (total_read_len < content_length && content_length <= MAX_HTTP_RECV_BUFFER) {
+		read_len = esp_http_client_read(client, buffer, content_length);
+		if (read_len <= 0) {
+			ESP_LOGE(TAG, "Error read data");
+		}
+		buffer[read_len] = 0;
+		ESP_LOGI(TAG, "read_len = %d", read_len);
+	}
+	ESP_LOGI(TAG, "HTTP Status = %d, content_length = %d",
+*/
+    esp_http_client_get_status_code(client);
+    esp_http_client_get_content_length(client);
+    esp_http_client_close(client);
+    esp_http_client_cleanup(client);
+}
 int wifi_connected = 0;
 void app_govee_main(){
     camera_fb_t * fb = NULL;
     int64_t fr_start = esp_timer_get_time();
-//    while(1){
-        fr_start = esp_timer_get_time();
-        ESP_LOGE("ZZZZZ","get one %u\n",(uint32_t)fr_start);
+    while(1){
         fb = esp_camera_fb_get();
+        fr_start = esp_timer_get_time();
+        ESP_LOGE("ZZZZZ","get one size=%d t=%u\n",fb->len,(uint32_t)fr_start);
         ESP_LOGE("ZZZZZ","start upload %u\n",(uint32_t)fr_start);
 	while(1){
             if(wifi_connected == 1){
 	      ESP_LOGE("ZZZZZ","len = %d\n",fb->len);
-	      upload_one(fb);
+	      //fmt
+	      uint8_t * _jpg_buf;
+	      size_t _jpg_buf_len;
+	      bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
+	       ESP_LOGE("ZZZZZ","len_jpg = %d\n",_jpg_buf_len);
+              if(jpeg_converted){
+	        //upload_one(fb);
+		upload_one_buf(_jpg_buf,_jpg_buf_len);
+		free(_jpg_buf);
+	      }
 	      break;
 	    }
 	    vTaskDelay(100); 
@@ -145,6 +200,7 @@ void app_govee_main(){
 	}
 	vTaskDelay(100000); 
         ESP_LOGE("ZZZZZ","upload done %u\n",(uint32_t)fr_start);
-        esp_camera_fb_return(fb);
-  //  }
+       esp_camera_fb_return(fb);
+       vTaskDelay(100000000);
+    }
 }

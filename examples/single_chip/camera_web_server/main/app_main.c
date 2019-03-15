@@ -34,8 +34,8 @@ void app_main()
     fr_start = esp_timer_get_time();
     ESP_LOGE("ZZZZZ","camera ok %u\n",(uint32_t)fr_start);
     app_wifi_main();
-    fr_start = esp_timer_get_time();
-    ESP_LOGE("ZZZZZ","wifi ok%u\n",(uint32_t)fr_start);
+ //   fr_start = esp_timer_get_time();
+  //  ESP_LOGE("ZZZZZ","wifi ok%u\n",(uint32_t)fr_start);
 //    app_httpd_main();
     app_govee_main();
 }
