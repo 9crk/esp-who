@@ -84,7 +84,7 @@ void upload_one(camera_fb_t *fb){
     sprintf(lengthStr,"%d",fb->len);
     ESP_LOGE("LLLLLLLLLL"," = = %s",lengthStr);
     esp_http_client_config_t config = {
-        .url = "http://10.162.2.151:8999/upload",
+        .url = "http://192.168.1.100:8999/upload",
         .event_handler = _http_event_handler,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config); 
@@ -130,7 +130,7 @@ void upload_one_buf(uint8_t* buf,size_t len){
     sprintf(lengthStr,"%d",len);
     ESP_LOGE("LLLLLLLLLL"," = = %s",lengthStr);
     esp_http_client_config_t config = {
-        .url = "http://10.162.2.151:8999/upload",
+        .url = "http://192.168.1.100:8999/upload",
         .event_handler = _http_event_handler,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config); 
@@ -201,10 +201,10 @@ void app_govee_main(){
 	      //fmt
 	      uint8_t * _jpg_buf;
 	      size_t _jpg_buf_len;
-	      fb->format = PIXFORMAT_YUV422SP; 
+	      //fb->format = PIXFORMAT_YUV422SP; 
 	      bool jpeg_converted = frame2jpg(fb, 90, &_jpg_buf, &_jpg_buf_len);
 	      ESP_LOGE("ZZZZZ","len_jpg = %d\n",_jpg_buf_len);
-	      fb->format = PIXFORMAT_YUV422; 
+	      //fb->format = PIXFORMAT_YUV422; 
               if(jpeg_converted){
 	        //upload_one(fb);
 		upload_one_buf(_jpg_buf,_jpg_buf_len);
