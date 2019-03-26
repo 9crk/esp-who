@@ -172,7 +172,17 @@ void upload_one_buf(uint8_t* buf,size_t len){
     esp_http_client_cleanup(client);
 }
 int wifi_connected = 0;
+void printb(uint8_t byte)
+{
+   int i;
+   for(i=0;i<8;i++){
+	if((byte >> i)&0x01)printf("1");
+	else printf("0");
+   }
+   printf(" ");
+}
 void app_govee_main(){
+    int i;
     camera_fb_t * fb = NULL;
     int64_t fr_start = esp_timer_get_time();
     while(1){
@@ -183,24 +193,33 @@ void app_govee_main(){
 	while(1){
             if(wifi_connected == 1){
 	      ESP_LOGE("ZZZZZ","len = %d\n",fb->len);
+	      //for(i=0;i<200;i++)printb(fb->buf[i]);
+	      //printf("\n");
+	      //for(i=0;i<200;i++)printb(fb->buf[640*480*2 - 201 +i]);
+	      //printf("\n");
+		
 	      //fmt
 	      uint8_t * _jpg_buf;
 	      size_t _jpg_buf_len;
-	      bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
-	       ESP_LOGE("ZZZZZ","len_jpg = %d\n",_jpg_buf_len);
+	      fb->format = PIXFORMAT_YUV422SP; 
+	      bool jpeg_converted = frame2jpg(fb, 90, &_jpg_buf, &_jpg_buf_len);
+	      ESP_LOGE("ZZZZZ","len_jpg = %d\n",_jpg_buf_len);
+	      fb->format = PIXFORMAT_YUV422; 
               if(jpeg_converted){
 	        //upload_one(fb);
 		upload_one_buf(_jpg_buf,_jpg_buf_len);
 		free(_jpg_buf);
 	      }
+	      //for(i=0;i<200;i++){fb->buf[i] = i;fb->buf[640*480*2-201+i]=i;}
+	      //upload_one(fb);
 	      break;
 	    }
 	    vTaskDelay(100); 
             ESP_LOGE("ZZZZZ","check ip\n");
 	}
-	vTaskDelay(100000); 
+	vTaskDelay(100); 
         ESP_LOGE("ZZZZZ","upload done %u\n",(uint32_t)fr_start);
-       esp_camera_fb_return(fb);
-       vTaskDelay(100000000);
+       
+	esp_camera_fb_return(fb);
     }
 }

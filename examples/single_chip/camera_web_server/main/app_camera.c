@@ -63,12 +63,12 @@ void app_camera_main ()
     config.pin_sscb_scl = SIOC_GPIO_NUM;
     config.pin_pwdn = PWDN_GPIO_NUM;
     config.pin_reset = RESET_GPIO_NUM;
-    config.xclk_freq_hz = 20000000;
-    config.pixel_format = PIXFORMAT_GRAYSCALE;// PIXFORMAT_YUV422;//JPEG;
+    config.xclk_freq_hz = 8000000;
+    config.pixel_format = PIXFORMAT_YUV422;// PIXFORMAT_GRAYSCALE;// PIXFORMAT_YUV422;//JPEG;
     //init with high specs to pre-allocate larger buffers
     config.frame_size = FRAMESIZE_VGA;//UXGA;
-    config.jpeg_quality = 10;
-    config.fb_count = 2;
+    config.jpeg_quality = 80;
+    config.fb_count = 1;
     ESP_LOGE("ZZZZZ","start init\n");
     // camera init
     esp_err_t err = esp_camera_init(&config);
