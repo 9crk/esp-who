@@ -53,20 +53,21 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch(event->event_id) {
     case SYSTEM_EVENT_AP_STACONNECTED:
-        ESP_LOGI(TAG, "station:" MACSTR " join, AID=%d",
+        ESP_LOGD(TAG, "station:" MACSTR " join, AID=%d",
                  MAC2STR(event->event_info.sta_connected.mac),
                  event->event_info.sta_connected.aid);
         break;
     case SYSTEM_EVENT_AP_STADISCONNECTED:
-        ESP_LOGI(TAG, "station:" MACSTR "leave, AID=%d",
+        ESP_LOGD(TAG, "station:" MACSTR "leave, AID=%d",
                  MAC2STR(event->event_info.sta_disconnected.mac),
                  event->event_info.sta_disconnected.aid);
         break;
     case SYSTEM_EVENT_STA_START:
         esp_wifi_connect();
+	ESP_LOGD(TAG,"start");
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
-        ESP_LOGI(TAG, "got ip:%s",
+        ESP_LOGD(TAG, "got ip:%s",
                  ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
         s_retry_num = 0;
 	wifi_connected = 1;
@@ -76,9 +77,9 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
             if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
                 esp_wifi_connect();
                 s_retry_num++;
-                ESP_LOGI(TAG,"retry to connect to the AP");
+                ESP_LOGD(TAG,"retry to connect to the AP");
             }
-            ESP_LOGI(TAG,"connect to the AP fail");
+            ESP_LOGD(TAG,"connect to the AP fail");
             break;
         }
     default:
